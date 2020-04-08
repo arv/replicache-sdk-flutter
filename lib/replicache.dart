@@ -110,6 +110,12 @@ class Replicache {
     if (_platform == null) {
       _platform = MethodChannel(CHANNEL_NAME);
       _platform.setMethodCallHandler(_methodChannelHandler);
+
+      _platform.setMethodCallHandler((MethodCall methodCall) {
+        print(
+            'method name: ${methodCall.method}, arguments: ${methodCall.arguments}');
+        return Future.value(42);
+      });
     }
 
     if (this._remote == "") {

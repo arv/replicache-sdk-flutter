@@ -25,10 +25,12 @@ public class ReplicachePlugin implements MethodCallHandler {
   private Handler generalHandler;
   private Handler pullHandler;
 
+  private static MethodChannel channel;
+
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     appContext = registrar.context();
-    final MethodChannel channel = new MethodChannel(registrar.messenger(), CHANNEL);
+    channel = new MethodChannel(registrar.messenger(), CHANNEL);
     channel.setMethodCallHandler(new ReplicachePlugin());
   }
 
@@ -83,6 +85,25 @@ public class ReplicachePlugin implements MethodCallHandler {
         sendResult(result, resultData, exception);
       }
     });
+
+    if (call.method.equals("pull")) {
+      Log.e("Replicache", "calling testInit");
+      channel.invokeMethod("testInit", "test data", new Result() {
+        public void error(String errorCode, String errorMessage, Object errorDetails) {
+          Log.e("Replicache", "error: " + errorCode + ", " + errorMessage + ", " + errorDetails);
+        }
+
+        public void notImplemented() {
+          Log.e("Replicache", "notImplemented");
+        }
+
+        public void success(Object result) {
+          Log.e("Replicache", "success: " + result);
+        }
+      });
+      Log.e("Replicache", "After calling testInit");
+    }
+
   }
 
   private void sendResult(final Result result, final byte[] data, final Exception e) {
